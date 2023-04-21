@@ -58,5 +58,7 @@ func main() {
 	router.GET("/albums/:id", getAlbumByID)
 	router.POST("/albums", postAlbums)
 
-	router.Run(":8080")
+	if err := router.Run(":8080"); err != nil {
+		panic(err)
+	}
 }

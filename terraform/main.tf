@@ -9,17 +9,26 @@ terraform {
 
 provider "docker" {}
 
-resource "docker_image" "nginx" {
-  name         = "nginx"
+resource "docker_image" "albumsvr_golang" {
+  name         = "albumsvr_golang"
+  build {
+    context = ".."
+    dockerfile = "Dockerfile"
+    build_arg = {
+      tag: "album-server"
+    }
+    label = {
+      author: "donghli"
+    }
+  }
   keep_locally = false
 }
 
-resource "docker_container" "nginx" {
-  image = docker_image.nginx.image_id
+resource "docker_container" "albumsvr_golang" {
+  image = docker_image.albumsvr_golang.image_id
   name  = var.container_name
-
   ports {
-    internal = 80
+    internal = 8080
     external = 8080
   }
 }
