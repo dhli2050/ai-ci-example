@@ -1,0 +1,31 @@
+name: 'AI-CI-Example'
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: |-
+          make build
+
+      - name: Terraform Init
+        id: tf_init
+        run: cd terraform && terraform init
+
+      - name: Terraform Validate
+        id: tf_validate
+        run: cd terraform && terraform validate 
+
+      - name: Deploy
+        run: |-
+          make deploy
