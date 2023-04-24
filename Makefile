@@ -16,7 +16,7 @@ destroy:
 	cd terraform && terraform destroy -auto-approve
 
 unit-test:
-	GIN_MODE=release go test -v ./...
+	GIN_MODE=release go test -v -run Handler ./...
 
 interface-test:
 	go test -v -run Interface
