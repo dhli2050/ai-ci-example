@@ -13,7 +13,7 @@ destroy:
 	cd terraform && terraform destroy -auto-approve
 
 unit-test:
-	go test ./...
+	GIN_MODE=release go test ./...
 
 # TODO: add real tests
 interface-test:
