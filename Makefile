@@ -1,10 +1,13 @@
-.PHONY: lint build deploy destroy unit-test interface-test
+.PHONY: lint build validate deploy destroy unit-test interface-test
 
 lint:
 	golangci-lint run
 
 build:
 	GOOS=linux GOARCH=amd64 go build -o albumsvr
+
+validate:
+	cd terraform && terraform validate
 
 deploy:
 	cd terraform && terraform apply -auto-approve

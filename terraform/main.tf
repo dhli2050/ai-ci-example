@@ -2,7 +2,7 @@ terraform {
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
-      version = "~> 3.0.1"
+      version = "3.0.2"
     }
   }
 }
@@ -31,5 +31,4 @@ resource "docker_container" "albumsvr_golang" {
     internal = 8080
     external = 8080
   }
-  command = [ "./albumsvr" ] # to be compatible with Github Actions
 }

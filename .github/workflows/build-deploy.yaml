@@ -27,7 +27,8 @@ jobs:
 
       - name: Terraform Validate
         id: tf_validate
-        run: cd terraform && terraform validate 
+        run: |-
+          make validate
 
       - name: Deploy
         run: |-
