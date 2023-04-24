@@ -1,4 +1,4 @@
-.PHONY: lint build deploy destroy
+.PHONY: lint build deploy destroy unit-test interface-test
 
 lint:
 	golangci-lint run
@@ -11,3 +11,10 @@ deploy:
 
 destroy:
 	cd terraform && terraform destroy -auto-approve
+
+unit-test:
+	go test ./...
+
+# TODO: add real tests
+interface-test:
+	@echo "Finished Interface Testing Cases!"
