@@ -18,7 +18,7 @@ resource "docker_image" "albumsvr_golang" {
       tag: "album-server"
     }
     label = {
-      author: "donghli"
+      author: "dhli"
     }
   }
   keep_locally = false
