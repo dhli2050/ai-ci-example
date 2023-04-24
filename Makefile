@@ -16,8 +16,7 @@ destroy:
 	cd terraform && terraform destroy -auto-approve
 
 unit-test:
-	GIN_MODE=release go test ./...
+	GIN_MODE=release go test -v ./...
 
-# TODO: add real tests
 interface-test:
-	@echo "Finished Interface Testing Cases!"
+	go test -v -run Interface
