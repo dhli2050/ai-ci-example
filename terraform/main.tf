@@ -31,4 +31,5 @@ resource "docker_container" "albumsvr_golang" {
     internal = 8080
     external = 8080
   }
+  command = [ "sleep", "10" ]
 }

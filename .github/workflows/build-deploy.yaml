@@ -30,7 +30,8 @@ jobs:
         run: cd terraform && terraform validate 
 
       - name: Deploy
-        run: cd terraform && terraform apply -auto-approve
+        run: |-
+          make deploy
 
       - name: Interface Test
         run: |-
