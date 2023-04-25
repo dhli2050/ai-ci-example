@@ -20,7 +20,7 @@ jobs:
           aws-region: ap-southeast-2
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@V2
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
 
