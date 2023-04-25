@@ -12,7 +12,7 @@ provider "docker" {}
 resource "docker_image" "albumsvr_golang" {
   name         = "albumsvr_golang"
   build {
-    context = ".."
+    context = "../.."
     dockerfile = "Dockerfile"
     build_arg = {
       tag: "album-server"
