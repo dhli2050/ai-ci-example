@@ -7,13 +7,13 @@ build:
 	GOOS=linux GOARCH=amd64 go build -o albumsvr
 
 validate:
-	cd terraform && terraform validate
+	cd terraform/docker && terraform validate
 
 deploy:
-	cd terraform && terraform apply -auto-approve
+	cd terraform/docker && terraform apply -auto-approve
 
 destroy:
-	cd terraform && terraform destroy -auto-approve
+	cd terraform/docker && terraform destroy -auto-approve
 
 unit-test:
 	GIN_MODE=release go test -v -run Handler ./...
