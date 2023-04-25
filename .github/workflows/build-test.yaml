@@ -1,4 +1,4 @@
-name: 'AI-CI-Example'
+name: 'Deploy to Docker and Test'
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
 
       - name: Terraform Init
         id: tf_init
-        run: cd terraform && terraform init
+        run: cd terraform/docker && terraform init
 
       - name: Terraform Validate
         id: tf_validate
