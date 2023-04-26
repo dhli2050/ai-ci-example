@@ -12,6 +12,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Unit Test
+        run: make unit-test
+
+      - name: Build
+        run: make build
+
+      - name: Setup Node Version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -32,3 +43,6 @@ jobs:
           terraform validate
           terraform plan
           terraform apply -auto-approve
+        env:
+          TF_VAR_aws_pem: ${{ secrets.AWS_PEM }}
+          TF_VAR_github_action_workspace: ${{ github.workspace }}
