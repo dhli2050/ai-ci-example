@@ -26,8 +26,8 @@ resource "null_resource" "docker_packaging" {
     cd ../..
     aws ecr get-login-password --region "${var.region}" | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.ap-southeast-2.amazonaws.com
     make build
-    docker build -t "${aws_ecr_repository.ai_ci_ecr_repo.repository_url}:latest" .
-    docker push "${aws_ecr_repository.ai_ci_ecr_repo.repository_url}:latest"
+    docker build -t "${aws_ecr_repository.ai_ci_ecr_repo.repository_url}:${var.image_version}" .
+    docker push "${aws_ecr_repository.ai_ci_ecr_repo.repository_url}:${var.image_version}"
     DATA
   }
 
@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "ai_ci_task" {
   container_definitions = jsonencode([
     {
       name = "${var.server_bin_name}"
-      image = "${aws_ecr_repository.ai_ci_ecr_repo.repository_url}"
+      image = "${aws_ecr_repository.ai_ci_ecr_repo.repository_url}:${var.image_version}"
       essential = true
       portMappings = [
         {
@@ -136,6 +136,9 @@ resource "aws_ecs_service" "ai_ci_service" {
     subnets = [ aws_default_subnet.subnet_a.id, aws_default_subnet.subnet_b.id, aws_default_subnet.subnet_c.id ]
     assign_public_ip = true
   }
+}
+
+resource "aws_default_vpc" "default_vpc" {
 }
 
 resource "aws_default_subnet" "subnet_a" {

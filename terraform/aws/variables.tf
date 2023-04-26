@@ -12,3 +12,8 @@ variable "region" {
   type = string
   default = "ap-southeast-2"
 }
+
+variable "image_version" {
+  type = string
+  default = "latest"
+}
