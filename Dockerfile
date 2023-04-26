@@ -1,4 +1,4 @@
-FROM alpine
+FROM --platform=linux/amd64 alpine
 
 ENV GIN_MODE=release
 ENV WORK_DIR /work

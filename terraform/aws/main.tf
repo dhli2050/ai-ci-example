@@ -9,11 +9,35 @@ terraform {
 
 # provision to ap-southeast-2 region
 provider "aws" {
-    region = "ap-southeast-2"
+    region = var.region
+}
+
+// Used by get the current aws number account.
+data "aws_caller_identity" "current" {
 }
 
 resource "aws_ecr_repository" "ai_ci_ecr_repo" {
   name = "ai-ci-ecr-repo"
+}
+
+resource "null_resource" "docker_packaging" {
+  provisioner "local-exec" {
+    command = <<DATA
+    cd ../..
+    aws ecr get-login-password --region "${var.region}" | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.ap-southeast-2.amazonaws.com
+    make build
+    docker build -t "${aws_ecr_repository.ai_ci_ecr_repo.repository_url}:latest" .
+    docker push "${aws_ecr_repository.ai_ci_ecr_repo.repository_url}:latest"
+    DATA
+  }
+
+  triggers = {
+    "run_at" = timestamp()
+  }
+
+  depends_on = [
+    aws_ecr_repository.ai_ci_ecr_repo
+  ]
 }
 
 resource "aws_ecs_cluster" "ai_ci_cluster" {
@@ -35,6 +59,14 @@ resource "aws_ecs_task_definition" "ai_ci_task" {
       ]
       memory = 512
       cpu = 256
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group = "${var.server_bin_name}"
+          awslogs-region = "${var.region}"
+          awslogs-stream-prefix = "ai-ci"
+        }
+      }
     }
   ])
   requires_compatibilities = [ "FARGATE" ]
@@ -42,6 +74,11 @@ resource "aws_ecs_task_definition" "ai_ci_task" {
   memory = 512
   cpu = 256
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+}
+
+resource "aws_cloudwatch_log_group" "logs" {
+  name              = var.server_bin_name
+  retention_in_days = 5
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
@@ -93,7 +130,7 @@ resource "aws_ecs_service" "ai_ci_service" {
   cluster = aws_ecs_cluster.ai_ci_cluster.id
   task_definition = aws_ecs_task_definition.ai_ci_task.arn
   launch_type = "FARGATE"
-  desired_count = 1
+  desired_count = 2
 
   network_configuration {
     subnets = [ aws_default_subnet.subnet_a.id, aws_default_subnet.subnet_b.id, aws_default_subnet.subnet_c.id ]
