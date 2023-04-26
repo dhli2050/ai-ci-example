@@ -47,6 +47,10 @@ resource "aws_ecs_task_definition" "ai_ci_task" {
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "ecs_task_execution_role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  inline_policy {
+    name = "EcsTaskExecutionPolicy"
+    policy = data.aws_iam_policy_document.ecs_task_policy.json
+  }
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
@@ -60,12 +64,36 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
+data "aws_iam_policy_document" "ecs_task_policy" {
+  statement {
+    sid = "EcsTaskPolicy"
+
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage"
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    actions = [ "ecr:GetAuthorizationToken" ]
+    resources = [ "*" ]
+  }
+  statement {
+    actions = [ "logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents" ]
+    resources = [ "*" ]
+  }
+}
+
 resource "aws_ecs_service" "ai_ci_service" {
   name = "ai-ci-service"
   cluster = aws_ecs_cluster.ai_ci_cluster.id
   task_definition = aws_ecs_task_definition.ai_ci_task.arn
   launch_type = "FARGATE"
-  desired_count = 3
+  desired_count = 1
 
   network_configuration {
     subnets = [ aws_default_subnet.subnet_a.id, aws_default_subnet.subnet_b.id, aws_default_subnet.subnet_c.id ]
