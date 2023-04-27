@@ -5,6 +5,11 @@ terraform {
       version = "~> 4.0"
     }
   }
+  backend "s3" {
+    bucket = "ai-ci-example-terraform-state"
+    key = "terraformstate"
+    region = "ap-southeast-2"
+  }
 }
 
 # provision to ap-southeast-2 region
