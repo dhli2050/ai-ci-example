@@ -4,7 +4,7 @@ lint:
 	golangci-lint run
 
 build:
-	CGO_ENABLE=0 GOOS=linux GOARCH=amd64 go build -o albumsvr
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o albumsvr
 
 validate:
 	cd terraform/docker && terraform validate
