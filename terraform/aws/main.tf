@@ -23,6 +23,9 @@ data "aws_caller_identity" "current" {
 
 resource "aws_ecr_repository" "ai_ci_ecr_repo" {
   name = "ai-ci-ecr-repo"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "null_resource" "docker_packaging" {
